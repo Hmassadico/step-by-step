@@ -1,5 +1,5 @@
 // Offline cache: the app works without internet after the first visit.
-const CACHE = "stepbystep-v3";
+const CACHE = "stepbystep-v4";
 const FILES = ["./", "index.html", "styles.css", "app.js", "manifest.webmanifest", "icons/icon.svg", "icons/icon-192.png",
   "lessons/level1.js", "lessons/level2.js", "lessons/level3.js", "lessons/level4.js", "lessons/level5.js",
   "lessons/ru-level1.js", "lessons/ru-level2.js", "lessons/ru-level3.js", "lessons/ru-level4.js", "config.js", "data/irregular-verbs.js", "data/tenses.js", "data/ru-alphabet.js", "icons/icon-512.png", "icons/icon-maskable-512.png",

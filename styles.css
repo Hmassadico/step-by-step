@@ -606,3 +606,21 @@ input[type="range"] { accent-color: var(--pen); width: 120px; }
 .seg button.on { background: var(--card); color: var(--pen); box-shadow: 0 1px 4px rgba(0,0,0,.12); }
 .linkish { border: 0; background: none; color: var(--pen); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; padding: 8px 4px; }
 .form-ok { color: var(--green); font-weight: 600; font-size: .92rem; background: var(--green-soft); border-radius: 10px; padding: 10px 12px; }
+
+/* what's new */
+.news-card { position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 10px; border: 2px solid var(--accent2);
+  background: linear-gradient(140deg, color-mix(in srgb, var(--accent2) 16%, var(--card)), var(--card) 55%, color-mix(in srgb, var(--pen) 10%, var(--card))); animation: newsIn .6s cubic-bezier(.3, 1.4, .5, 1) backwards; }
+.news-card::after { content: ""; position: absolute; inset: 0; background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,.35) 50%, transparent 70%); transform: translateX(-100%); animation: shine 3.5s ease-in-out 1s infinite; pointer-events: none; }
+@keyframes shine { 30%, 100% { transform: translateX(100%); } }
+@keyframes newsIn { from { opacity: 0; transform: translateY(-14px) scale(.96); } }
+.news-card.bye { animation: newsOut .28s ease-in forwards; }
+@keyframes newsOut { to { opacity: 0; transform: scale(.94) translateY(-8px); } }
+.news-tag { font: 700 .7rem/1 var(--f-display); letter-spacing: .08em; text-transform: uppercase; color: #fff; background: linear-gradient(90deg, var(--accent2), var(--pen)); padding: 6px 10px; border-radius: 99px; }
+.news-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.news-list li { display: flex; gap: 10px; align-items: flex-start; animation: rise .45s backwards; animation-delay: calc(.3s + var(--i, 0) * 90ms); }
+.news-list b { display: block; line-height: 1.25; }
+.news-list .sub { display: block; }
+.news-em { font-size: 1.3rem; line-height: 1.2; flex: none; }
+.news-em.big { font-size: 2rem; }
+.news-item { display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: start; }
+.news-item p { margin-top: 6px; }

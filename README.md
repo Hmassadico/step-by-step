@@ -23,7 +23,9 @@ works offline once opened.
 and the app shows which words it understood (green) and which need another go (red). There's also a 6-sentence
 speaking session on the Daily tab. Works in Chrome on Android and Safari on iPhone (needs internet).
 
-**Cloud sync (Supabase):** sign in with an email code and progress is backed up and shared between phones.
+**Cloud sync (Supabase):** sign in with email + password (or an email link); progress is synced between phones, with daily cloud backups you can restore.
+
+**What's new banner:** a bilingual (English/Russian) card on the home screen announces each update once; edit `NEWS` and bump `NEWS_VER` in `app.js` for the next release.
 
 No build step — plain HTML/CSS/JS. Progress is always saved on the phone, and also in the cloud once signed in.
 
