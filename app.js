@@ -565,6 +565,7 @@ views.home = () => {
       <span class="label">${esc(t("todayGoal").main)}</span>
     </div>
   </section>
+  ${newsBanner()}
   ${nx ? `<button class="card hero continue" data-go="lesson" data-id="${nx.id}">
       <div class="em big">${nx.emoji}</div>
       <div class="t"><span class="label">${tt("continue")}</span><h2>${esc(nx.title)}</h2>${helpOn() ? `<span class="sub">${esc(nx.sub)}</span>` : ""}${nx.steps.length ? `<span class="next-step">${nextStep(nx) ? `Step ${nextStep(nx).n} of ${nx.steps.length} · ${esc(nextStep(nx).title)}` : "Topic test"}</span>${stepDots(nx)}` : ""}</div>
@@ -596,6 +597,10 @@ views.home = () => {
   }).join("")}`;
 };
 views.home.bind = (root) => {
+  const nxb = $("#news-x", root), nok = $("#news-ok", root), nmore = $("#news-more", root);
+  const closeNews = () => { const c = $(".news-card", root); markNewsSeen(); if (c && !reduced()) { c.classList.add("bye"); setTimeout(render, 280); } else render(); };
+  if (nxb) nxb.onclick = closeNews; if (nok) nok.onclick = closeNews;
+  if (nmore) nmore.onclick = () => { sfx.tap(); go("news"); };
   const ig = $("#inst-go", root); if (ig) ig.onclick = () => doInstall();
   const ix = $("#inst-x", root); if (ix) ix.onclick = () => { try { localStorage.setItem("sbs.hideInstall", "1"); } catch (e) {} render(); };
   $$("[data-nav-to]", root).forEach(b => b.onclick = () => { sfx.tap(); stack = [{ view: b.dataset.navTo, params: {} }]; render(); });
@@ -1524,6 +1529,40 @@ views.alphabet = () => `
   <button class="btn block" id="abc-game">🔠 Practise the letters</button>`;
 views.alphabet.bind = (root) => { $("#abc-game", root).onclick = () => GAMES.letters.start(); };
 
+/* ---------- what's new ---------- */
+const NEWS_VER = "2026-10-20";
+const NEWS = [
+  ["🧩", "Grammar, one topic at a time", "Грамматика — по одной теме", "Every topic now has 3 short steps with a rule card, then a topic test.", "В каждой теме — 3 коротких шага с правилом и итоговый тест."],
+  ["🎮", "New Play tab", "Новая вкладка «Игры»", "Speed Run, Memory Match, Word Scramble, Sort It, Irregular Verbs Gym and more.", "Скоростной забег, «Найди пары», «Собери слово», неправильные глаголы и другое."],
+  ["🔍", "New puzzles", "Новые задания", "Spot the mistake and fix it; sort words into the right box.", "Найди ошибку и исправь её; разложи слова по коробкам."],
+  ["🕰️", "Handy tools", "Полезные шпаргалки", "All 12 tenses with timelines, and 115 irregular verbs with audio.", "Все 12 времён с таймлайнами и 115 неправильных глаголов с аудио."],
+  ["📲", "Install as an app", "Установи как приложение", "Put Step by Step on your home screen — it works offline too.", "Добавь Step by Step на главный экран — работает и без интернета."],
+  ["☁️", "Safer progress", "Прогресс в безопасности", "Sign in with email + password; daily cloud backups you can restore.", "Вход по почте и паролю; ежедневные копии в облаке, которые можно восстановить."]
+];
+function newsSeen() { try { return localStorage.getItem("sbs.news") === NEWS_VER; } catch (e) { return false; } }
+function markNewsSeen() { try { localStorage.setItem("sbs.news", NEWS_VER); } catch (e) {} }
+function newsBanner() {
+  if (newsSeen() || !P()) return "";
+  return `<section class="card news-card" aria-label="What's new">
+    <div class="spread"><span class="news-tag">✨ New · Новое</span><button class="icon-btn small-x" id="news-x" aria-label="Close">${I.close}</button></div>
+    <h2>What's new in Step by Step<br><span class="hand accent">Что нового</span></h2>
+    <ul class="news-list">${NEWS.slice(0, 3).map(([em, t1, t2], i) => `<li style="--i:${i}"><span class="news-em">${em}</span><span><b>${esc(t1)}</b><span class="sub">${esc(t2)}</span></span></li>`).join("")}</ul>
+    <div class="row"><button class="btn small" id="news-more">See all updates · Все новинки</button><button class="btn ghost small" id="news-ok">Got it · Понятно</button></div>
+  </section>`;
+}
+views.news = () => `
+  <header class="lesson-head"><button class="icon-btn" data-back aria-label="Back">${I.back}</button><h1>What's new <span class="hand accent">Что нового</span></h1></header>
+  ${mascot("cheer", "Lots of new things to try!", "Много нового — попробуй!", 84)}
+  <div class="stack">${NEWS.map(([em, t1, t2, d1, d2], i) => `<section class="card news-item reveal" style="--i:${i}">
+    <span class="news-em big">${em}</span>
+    <div><h2>${esc(t1)}</h2><span class="sub">${esc(t2)}</span><p>${esc(d1)}</p><p class="help">${esc(d2)}</p></div>
+  </section>`).join("")}</div>
+  <div class="row"><button class="btn block big" id="news-play">🎮 Try the games · К играм</button></div>`;
+views.news.bind = (root) => {
+  markNewsSeen();
+  $("#news-play", root).onclick = () => { stack = [{ view: "play", params: {} }]; render(); };
+};
+
 /* ---------- install the app ---------- */
 let installEvt = null;
 window.addEventListener("beforeinstallprompt", e => { e.preventDefault(); installEvt = e; softRender(); });
@@ -1716,6 +1755,7 @@ views.me = () => {
     <div class="setting"><div><b>Light / dark</b><br><span class="muted small">Тема</span></div><select id="s-theme">${[["system", "Automatic"], ["light", "Light"], ["dark", "Dark"]].map(([v, n]) => `<option value="${v}" ${DB.theme === v ? "selected" : ""}>${n}</option>`).join("")}</select></div>
   </section>
   ${canInstall() ? `<button class="card cloud-card" id="me-install"><span class="em">${I.install}</span><span class="t"><b>Install the app <span class="sub">Установить</span></b><span class="muted small">Home-screen icon, full screen, works offline</span></span><span class="go-arrow">→</span></button>` : ""}
+  <button class="card cloud-card" data-go="news"><span class="em">✨</span><span class="t"><b>What's new <span class="sub">Что нового</span></b><span class="muted small">Grammar steps, games, tools, backups</span></span><span class="go-arrow">→</span></button>
   <button class="card cloud-card" data-go="cloud"><span class="em">${I.cloud}</span><span class="t"><b>Cloud sync <span class="sub">Облако</span></b><span class="muted small">${!Sync.available ? "Available in the installed app" : Sync.user ? `On · ${esc(Sync.user.email || "")}` : "Off — sign in to keep progress safe on every phone"}</span></span><i id="sync-badge" class="sync-dot" data-state="${Sync.st.state}"></i></button>
   <section class="card stack">
     <b>Back up progress</b>
